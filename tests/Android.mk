@@ -23,10 +23,10 @@ LOCAL_PATH := $(call my-dir)
 # -----------------------------------------------------------------------------
 
 benchmark_c_flags = \
-    -O2 \
     -Wall -Wextra \
     -Werror \
     -fno-builtin \
+    -funroll-loops -frename-registers -fgcse-sm -fgcse-las
 
 benchmark_src_files = \
     benchmark_main.cpp \
@@ -56,6 +56,7 @@ test_c_flags = \
     -Wall -Wextra \
     -Werror \
     -fno-builtin \
+    -funroll-loops -frename-registers -fgcse-sm -fgcse-las
 
 test_src_files = \
     dirent_test.cpp \

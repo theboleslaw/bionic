@@ -140,7 +140,6 @@ libm_common_src_files += \
     upstream-freebsd/lib/msun/src/s_lrintf.c \
     upstream-freebsd/lib/msun/src/s_lround.c \
     upstream-freebsd/lib/msun/src/s_lroundf.c \
-    upstream-freebsd/lib/msun/src/s_modf.c \
     upstream-freebsd/lib/msun/src/s_modff.c \
     upstream-freebsd/lib/msun/src/s_nan.c \
     upstream-freebsd/lib/msun/src/s_nearbyint.c \
@@ -175,31 +174,14 @@ libm_common_src_files += \
 
 libm_common_src_files += fake_long_double.c
 
-  ifeq ($(TARGET_CPU_VARIANT),krait)
     libm_common_src_files += \
 	  arm/e_pow.S	\
 	  arm/s_cos.S	\
 	  arm/s_sin.S	\
 	  arm/e_sqrtf.S	\
 	  arm/e_sqrt.S
-    libm_common_cflags += -DKRAIT_NEON_OPTIMIZATION -fno-if-conversion
-  else
-      ifeq ($(TARGET_USE_QCOM_BIONIC_OPTIMIZATION),true)
-        libm_common_src_files += \
-	      arm/e_pow.S \
-	      arm/s_cos.S \
-	      arm/s_sin.S \
-	      arm/e_sqrtf.S \
-	      arm/e_sqrt.S
-        libm_common_cflags += -DQCOM_NEON_OPTIMIZATION -fno-if-conversion
-      else
-        libm_common_src_files += \
-	      upstream-freebsd/lib/msun/src/s_cos.c \
-	      upstream-freebsd/lib/msun/src/s_sin.c \
-	      upstream-freebsd/lib/msun/src/e_sqrtf.c \
-	      upstream-freebsd/lib/msun/src/e_sqrt.c
-      endif
-  endif
+
+    libm_common_cflags += -DQCOM_NEON_OPTIMIZATION -fno-if-conversion -funroll-loops -frename-registers -fgcse-sm -fgcse-las
 
 # TODO: on Android, "long double" is "double".
 #    upstream-freebsd/lib/msun/src/e_acosl.c \
@@ -244,12 +226,11 @@ libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
 
 libm_arm_includes := $(LOCAL_PATH)/arm
 libm_arm_src_files := arm/fenv.c
-ifeq ($(TARGET_CPU_VARIANT),krait)
-  libm_arm_cflags += -DKRAIT_NEON_OPTIMIZATION
-else
-  ifeq ($(TARGET_USE_QCOM_BIONIC_OPTIMIZATION),true)
-	libm_arm_cflags += -DQCOM_NEON_OPTIMIZATION
-  endif
+libm_arm_cflags += -DQCOM_NEON_OPTIMIZATION -fno-if-conversion -funroll-loops -frename-registers -fgcse-sm -fgcse-las
+
+ifeq ($(ARCH_ARM_HAVE_NEON),true)
+  libm_arm_src_files += \
+    arm/s_modf.S
 endif
 
 

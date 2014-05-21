@@ -35,7 +35,7 @@ LOCAL_SRC_FILES:= \
 	src/pure_virtual.cpp \
 	src/typeinfo.cpp
 
-LOCAL_CFLAGS := $(libstdc++_cflags)
+LOCAL_CFLAGS := $(libstdc++_cflags) -funroll-loops -frename-registers -fgcse-sm -fgcse-las
 
 LOCAL_MODULE:= libstdc++
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk

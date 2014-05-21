@@ -34,6 +34,10 @@ _LIBC_FORTIFY_FILES_TO_REMOVE := \
     bionic/__strcpy_chk.cpp \
     bionic/__strcat_chk.cpp \
 
+# cflags 
+libc_common_cflags_arm := \
+    -funroll-loops -frename-registers -fgcse-sm -fgcse-las
+
 libc_common_src_files := \
     $(filter-out $(_LIBC_FORTIFY_FILES_TO_REMOVE),$(libc_common_src_files))
 
